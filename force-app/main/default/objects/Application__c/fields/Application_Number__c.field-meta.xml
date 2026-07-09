@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>Application_Number__c</fullName>
+    <label>Application Number</label>
+    <type>Text</type>
+    <length>20</length>
+    <externalId>true</externalId>
+    <unique>true</unique>
+    <required>false</required>
+</CustomField>

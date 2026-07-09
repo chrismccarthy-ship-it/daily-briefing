@@ -1,0 +1,338 @@
+<template>
+    <article class="briefing">
+        <!-- Header -->
+        <header class="briefing__head">
+            <div class="briefing__title">
+                <h1>Start Your Day</h1>
+                <template lwc:if={userName}>
+                    <p class="briefing__sub">{userName} · as of {asOf}</p>
+                </template>
+            </div>
+            <div class="briefing__controls">
+                <lightning-combobox
+                    label="Business area"
+                    variant="label-hidden"
+                    name="mode"
+                    value={businessMode}
+                    options={modeOptions}
+                    onchange={handleMode}
+                    class="mode-select"
+                    dropdown-alignment="right">
+                </lightning-combobox>
+                <template lwc:if={showToggle}>
+                    <lightning-input
+                        type="toggle"
+                        label="Scope"
+                        variant="label-hidden"
+                        message-toggle-active="Owned + engaged"
+                        message-toggle-inactive="Owned only"
+                        checked={isEngagement}
+                        disabled={isLoading}
+                        onchange={handleScopeChange}>
+                    </lightning-input>
+                </template>
+                <lightning-button-icon
+                    icon-name="utility:refresh"
+                    alternative-text="Refresh"
+                    title="Refresh"
+                    variant="border-filled"
+                    disabled={isLoading}
+                    onclick={handleRefresh}>
+                </lightning-button-icon>
+            </div>
+        </header>
+
+        <!-- AI summary + ask panel -->
+        <template lwc:if={showAi}>
+            <section class="ai" aria-label="AI insights">
+                <div class="ai__head">
+                    <lightning-icon icon-name="utility:einstein" size="small" class="ai__icon"></lightning-icon>
+                    <h2 class="ai__title">AI summary</h2>
+                    <lightning-button-icon
+                        icon-name="utility:refresh"
+                        variant="bare"
+                        alternative-text="Refresh summary"
+                        title="Refresh summary"
+                        disabled={aiSummaryLoading}
+                        onclick={loadSummary}>
+                    </lightning-button-icon>
+                </div>
+
+                <template lwc:if={aiSummaryLoading}>
+                    <div class="ai__skel"></div>
+                    <div class="ai__skel ai__skel_short"></div>
+                </template>
+                <template lwc:elseif={aiError}>
+                    <p class="ai__err" role="alert">{aiError}</p>
+                </template>
+                <template lwc:else>
+                    <p class="ai__summary">{aiSummary}</p>
+                </template>
+
+                <div class="ai__ask">
+                    <lightning-input
+                        type="text"
+                        label="Ask about your day"
+                        variant="label-hidden"
+                        placeholder="Ask about your day, e.g. what should I prioritize?"
+                        value={aiPrompt}
+                        class="ai__input"
+                        onchange={handleAiPromptChange}
+                        onkeyup={handleAiKey}>
+                    </lightning-input>
+                    <lightning-button
+                        label="Run"
+                        variant="brand"
+                        icon-name="utility:send"
+                        disabled={runDisabled}
+                        onclick={runUserPrompt}>
+                    </lightning-button>
+                </div>
+
+                <div class="ai__chips">
+                    <template for:each={promptGroups} for:item="g">
+                        <div key={g.key} class="ai__chipgroup">
+                            <span class="ai__chiplabel">{g.label}</span>
+                            <template for:each={g.chips} for:item="ch">
+                                <button key={ch.key} class="chip" type="button"
+                                    data-prompt={ch.prompt} disabled={aiAnswerLoading}
+                                    onclick={handleChip}>{ch.label}</button>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+
+                <template lwc:if={aiAnswerLoading}>
+                    <div class="ai__skel"></div>
+                </template>
+                <template lwc:elseif={aiAnswer}>
+                    <div class="ai__answer">{aiAnswer}</div>
+                </template>
+            </section>
+        </template>
+
+        <!-- Loading skeleton -->
+        <template lwc:if={isLoading}>
+            <div class="skeleton" aria-hidden="true">
+                <div class="skeleton__bar skeleton__bar_wide"></div>
+                <div class="skeleton__bar"></div>
+                <div class="skeleton__bar"></div>
+                <div class="skeleton__bar skeleton__bar_narrow"></div>
+            </div>
+        </template>
+
+        <template lwc:elseif={errorMessage}>
+            <div class="state state_error" role="alert">{errorMessage}</div>
+        </template>
+
+        <template lwc:else>
+            <!-- Quick counts -->
+            <div class="counts">
+                <template for:each={counts} for:item="c">
+                    <div key={c.key} class="counts__item">
+                        <span class="counts__value">{c.value}</span>
+                        <span class="counts__label">{c.label}</span>
+                    </div>
+                </template>
+            </div>
+
+            <!-- Search -->
+            <div class="searchbar">
+                <lightning-input
+                    type="search"
+                    label="Search records"
+                    variant="label-hidden"
+                    placeholder="Search all sections..."
+                    value={searchTerm}
+                    onchange={handleSearch}
+                    onkeyup={handleSearch}>
+                </lightning-input>
+            </div>
+
+            <!-- Sections -->
+            <template for:each={viewSections} for:item="s">
+                <section key={s.key} class="sec" style={s.style}>
+                    <div class="sec__head" data-key={s.key} onclick={toggleCollapse}
+                        onkeydown={handleHeaderKey} role="button" tabindex="0"
+                        aria-expanded={s.ariaExpanded} aria-controls={s.regionId}>
+                        <lightning-icon icon-name={s.chevron} size="x-small" class="sec__chev"
+                            alternative-text="Toggle section"></lightning-icon>
+                        <lightning-icon icon-name={s.icon} size="small" class="sec__icon"
+                            alternative-text=""></lightning-icon>
+                        <h2 class="sec__title">{s.label}</h2>
+                        <span class="sec__count">{s.count}</span>
+                    </div>
+
+                    <template lwc:if={s.isCollapsed}></template>
+                    <template lwc:else>
+                        <div id={s.regionId}>
+                        <template lwc:if={s.showToolbar}>
+                            <div class="sec__toolbar">
+                                <lightning-input
+                                    type="search"
+                                    label="Search this section"
+                                    variant="label-hidden"
+                                    placeholder="Search this section..."
+                                    class="sec__search"
+                                    data-key={s.key}
+                                    value={s.sectionSearchValue}
+                                    onchange={handleSectionSearch}
+                                    onkeyup={handleSectionSearch}>
+                                </lightning-input>
+                                <template lwc:if={s.hasStructured}>
+                                    <template for:each={s.structuredControls} for:item="f">
+                                        <div key={f.key} class="struct">
+                                            <template lwc:if={f.isPicklist}>
+                                                <lightning-combobox
+                                                    label={f.label}
+                                                    variant="label-hidden"
+                                                    placeholder={f.label}
+                                                    value={f.value}
+                                                    options={f.options}
+                                                    data-section={f.section}
+                                                    data-filter={f.id}
+                                                    onchange={handleStructured}>
+                                                </lightning-combobox>
+                                            </template>
+                                            <template lwc:elseif={f.isDate}>
+                                                <lightning-input
+                                                    type="date"
+                                                    label={f.label}
+                                                    variant="label-hidden"
+                                                    value={f.value}
+                                                    data-section={f.section}
+                                                    data-filter={f.id}
+                                                    onchange={handleStructured}>
+                                                </lightning-input>
+                                            </template>
+                                            <template lwc:elseif={f.isSearch}>
+                                                <lightning-input
+                                                    type="search"
+                                                    label={f.label}
+                                                    variant="label-hidden"
+                                                    placeholder={f.label}
+                                                    value={f.value}
+                                                    data-section={f.section}
+                                                    data-filter={f.id}
+                                                    onchange={handleStructured}
+                                                    onkeyup={handleStructured}>
+                                                </lightning-input>
+                                            </template>
+                                        </div>
+                                    </template>
+                                </template>
+                                <template lwc:else>
+                                    <lightning-button-icon
+                                        icon-name="utility:filterList"
+                                        variant={s.filterBtnVariant}
+                                        alternative-text="Toggle column filters"
+                                        title="Column filters"
+                                        data-key={s.key}
+                                        onclick={toggleFilters}>
+                                    </lightning-button-icon>
+                                </template>
+                            </div>
+                        </template>
+                        <template lwc:if={s.isEmpty}>
+                            <p class="sec__empty">{s.emptyMessage}</p>
+                        </template>
+                        <template lwc:else>
+                            <div class="tablewrap">
+                                <table class="tbl">
+                                    <thead>
+                                        <tr>
+                                            <template for:each={s.columns} for:item="col">
+                                                <th key={col.key} scope="col" aria-sort={col.ariaSort}>
+                                                    <button class="th-sort" data-section={col.section}
+                                                        data-col={col.colIndex} onclick={handleSort}>
+                                                        <span>{col.label}</span>
+                                                        <template lwc:if={col.isSorted}>
+                                                            <lightning-icon icon-name={col.sortIcon}
+                                                                size="xx-small" alternative-text={col.sortAlt}
+                                                                class="th-sort__i"></lightning-icon>
+                                                        </template>
+                                                    </button>
+                                                </th>
+                                            </template>
+                                            <th scope="col" class="tbl__action-h">
+                                                <span class="sr-only">Actions</span>
+                                            </th>
+                                        </tr>
+                                        <template lwc:if={s.isFilterOpen}>
+                                            <tr class="filterrow">
+                                                <template for:each={s.columns} for:item="col">
+                                                    <th key={col.key} scope="col">
+                                                        <input type="text" class="colfilter"
+                                                            placeholder="Filter" aria-label={col.filterLabel}
+                                                            value={col.filterValue}
+                                                            data-section={col.section} data-col={col.colIndex}
+                                                            oninput={handleColumnFilter}/>
+                                                    </th>
+                                                </template>
+                                                <th class="tbl__action-h"></th>
+                                            </tr>
+                                        </template>
+                                    </thead>
+                                    <tbody>
+                                        <template for:each={s.rows} for:item="r">
+                                            <tr key={r.key} class={r.rowClass}>
+                                                <template for:each={r.cells} for:item="cell">
+                                                    <td key={cell.key} class={cell.cls}>
+                                                        <template lwc:if={cell.isLink}>
+                                                            <a href={cell.href} class={cell.cls}>{cell.text}</a>
+                                                        </template>
+                                                        <template lwc:elseif={cell.isBadge}>
+                                                            <span class={cell.badgeClass}>{cell.text}</span>
+                                                        </template>
+                                                        <template lwc:else>
+                                                            <span class={cell.cls}>{cell.text}</span>
+                                                        </template>
+                                                    </td>
+                                                </template>
+                                                <td class="tbl__action">
+                                                    <template lwc:if={r.isRecord}>
+                                                        <lightning-button-menu alternative-text="Actions"
+                                                            icon-size="x-small" menu-alignment="right"
+                                                            data-id={r.id} data-object={r.objectApiName}
+                                                            onselect={handleRowAction}>
+                                                            <lightning-menu-item value="view" label="View"></lightning-menu-item>
+                                                            <lightning-menu-item value="edit" label="Edit"></lightning-menu-item>
+                                                            <lightning-menu-item value="assign" label="Assign"></lightning-menu-item>
+                                                            <lightning-menu-item value="delete" label="Delete"></lightning-menu-item>
+                                                            <template lwc:if={r.isCaseRow}>
+                                                                <lightning-menu-item value="swarm" label="Initiate Slack swarm"></lightning-menu-item>
+                                                                <lightning-menu-item value="teams" label="Escalate to Teams"></lightning-menu-item>
+                                                            </template>
+                                                            <template lwc:if={r.isAppRow}>
+                                                                <lightning-menu-item value="approve" label="Approve"></lightning-menu-item>
+                                                            </template>
+                                                        </lightning-button-menu>
+                                                    </template>
+                                                    <template lwc:elseif={r.isAlert}>
+                                                        <lightning-button-menu alternative-text="Actions"
+                                                            icon-size="x-small" menu-alignment="right"
+                                                            data-id={r.id} data-object={r.objectApiName}
+                                                            onselect={handleRowAction}>
+                                                            <lightning-menu-item value="view" label="Open record"></lightning-menu-item>
+                                                        </lightning-button-menu>
+                                                    </template>
+                                                    <template lwc:elseif={r.isSlack}>
+                                                        <a href={r.externalUrl} target="_blank" rel="noopener" class="btn-thread">Open thread</a>
+                                                    </template>
+                                                </td>
+                                            </tr>
+                                        </template>
+                                    </tbody>
+                                </table>
+                                <template lwc:if={s.truncated}>
+                                    <p class="sec__more">Showing {s.limit} of {s.count}. Raise "Max records per section" in the page editor to see more.</p>
+                                </template>
+                            </div>
+                        </template>
+                        </div>
+                    </template>
+                </section>
+            </template>
+        </template>
+    </article>
+</template>

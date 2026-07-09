@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Slack Briefing Access</label>
+    <description>Grants access to the Slack External Credential principal so the Daily Briefing can call Slack.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <externalCredentialPrincipalAccesses>
+        <enabled>true</enabled>
+        <externalCredentialPrincipal>Slack-SlackPrincipal</externalCredentialPrincipal>
+    </externalCredentialPrincipalAccesses>
+</PermissionSet>

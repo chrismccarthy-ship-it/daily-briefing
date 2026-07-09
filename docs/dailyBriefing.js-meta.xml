@@ -1,0 +1,40 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<LightningComponentBundle xmlns="http://soap.sforce.com/2006/04/metadata">
+    <apiVersion>62.0</apiVersion>
+    <isExposed>true</isExposed>
+    <masterLabel>Daily Briefing</masterLabel>
+    <description>Start-your-day dashboard: at-risk accounts, tasks, cases, overdue opportunities, alerts, Slack — with row actions.</description>
+    <targets>
+        <target>lightning__HomePage</target>
+        <target>lightning__AppPage</target>
+        <target>lightning__RecordPage</target>
+    </targets>
+    <targetConfigs>
+        <targetConfig targets="lightning__HomePage,lightning__AppPage,lightning__RecordPage">
+            <property name="defaultScope" type="String" label="Default account scope"
+                description="Which accounts appear by default." datasource="owner,engagement" default="owner"/>
+            <property name="hideScopeToggle" type="Boolean" label="Hide scope toggle"
+                description="Hide the toggle and lock to the default scope." default="false"/>
+            <property name="maxRecords" type="Integer" label="Max records per section"
+                description="Caps how many rows each section shows (default 10)." default="10" min="1" max="50"/>
+            <property name="hideAiSummary" type="Boolean" label="Hide AI summary panel"
+                description="Hide the AI summary and ask-a-question panel at the top." default="false"/>
+
+            <property name="hideAccounts" type="Boolean" label="Hide: Accounts That Need Attention" default="false"/>
+            <property name="hideTasks" type="Boolean" label="Hide: Top Tasks" default="false"/>
+            <property name="hideCases" type="Boolean" label="Hide: Cases" default="false"/>
+            <property name="hideOpportunities" type="Boolean" label="Hide: Overdue Opportunities" default="false"/>
+            <property name="hideApplications" type="Boolean" label="Hide: Applications" default="false"/>
+            <property name="hideAlerts" type="Boolean" label="Hide: Alerts &amp; Mentions" default="false"/>
+            <property name="hideSlack" type="Boolean" label="Hide: Slack Messages" default="false"/>
+
+            <property name="accentAccounts" type="String" label="Color: Accounts (hex)" default="#B7791F"/>
+            <property name="accentTasks" type="String" label="Color: Tasks (hex)" default="#1B69C4"/>
+            <property name="accentCases" type="String" label="Color: Cases (hex)" default="#C23934"/>
+            <property name="accentOpportunities" type="String" label="Color: Opportunities (hex)" default="#2E844A"/>
+            <property name="accentAlerts" type="String" label="Color: Alerts (hex)" default="#5A3FD6"/>
+            <property name="accentSlack" type="String" label="Color: Slack (hex)" default="#611F69"/>
+            <property name="accentApplications" type="String" label="Color: Applications (hex)" default="#0B7285"/>
+        </targetConfig>
+    </targetConfigs>
+</LightningComponentBundle>

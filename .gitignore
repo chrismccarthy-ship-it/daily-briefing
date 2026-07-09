@@ -1,0 +1,8 @@
+# Salesforce CLI local state (machine/org specific)
+.sf/
+.sfdx/
+.localdevserver/
+deploy-options.json
+
+# Node
+node_modules/
