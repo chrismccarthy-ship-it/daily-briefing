@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CustomField xmlns="http://soap.sforce.com/2006/04/metadata">
+    <fullName>SDO_AI_AccountHealth__c</fullName>
+    <label>AI Account Health</label>
+    <type>Picklist</type>
+    <required>false</required>
+    <description>AI-derived account health signal consumed by the Daily Briefing dashboard.</description>
+    <valueSet>
+        <restricted>true</restricted>
+        <valueSetDefinition>
+            <sorted>false</sorted>
+            <value><fullName>Healthy</fullName><default>false</default><label>Healthy</label></value>
+            <value><fullName>Watch</fullName><default>false</default><label>Watch</label></value>
+            <value><fullName>At Risk</fullName><default>false</default><label>At Risk</label></value>
+            <value><fullName>Critical</fullName><default>false</default><label>Critical</label></value>
+            <value><fullName>Churned</fullName><default>false</default><label>Churned</label></value>
+        </valueSetDefinition>
+    </valueSet>
+</CustomField>
