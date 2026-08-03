@@ -125,7 +125,10 @@ export default class DailyBriefing extends LightningElement {
 
 ### Deploy & place
 - Deploy the LWC bundle + Apex.
-- Drop the component on the **Home page** in App Builder. Zero clicks for the rep.
+- Add it to a **standard Home page** (no metadata needed): open the **Home** tab → gear ⚙ →
+  **Edit Page** → drag **Daily Briefing** from the **Custom** components onto the canvas → **Save**
+  → **Activation** → assign as Org / App / Profile default. (New page instead: Setup →
+  **Lightning App Builder** → **New** → **Home Page**.) Zero clicks for the rep after that.
 
 ### Tune each list per placement (no redeploy)
 Select the component in App Builder to configure it — the same component can be focused on a

@@ -148,12 +148,32 @@ will fail validation:
 ### Post‑deploy setup
 1. **Assign permission sets** — `Application Access` to anyone who uses the dashboard;
    `Slack Briefing Access` only if you enable Slack.
-2. **Place the component** — App Builder → Home (or App) page → drop **Daily Briefing**, or use
-   the included `Daily_Briefing_Home` FlexiPage. Configure the design properties (scope, colors,
-   which sections show, max rows).
+2. **Place the component** — add **Daily Briefing** to a Home or App page (see below), or use the
+   included `Daily_Briefing_Home_Page` FlexiPage. Configure the design properties (scope, filters,
+   row limits, colors, which sections show).
 3. **(Optional) Prompt Template** — create `Daily_Briefing_Prompt` to light up the HTML/Flow and
    Agentforce paths (`docs/SETUP-GUIDE.md`).
 4. **(Optional) Slack** — follow `docs/SLACK-SETUP.md`, then flip `ENABLE_SLACK = true` and redeploy the class.
+
+### Add the component to a standard Home page (App Builder — no metadata)
+
+The quickest way to surface it, straight onto the org's standard Home page:
+
+1. Click the **Home** tab in your Lightning app.
+2. Click the **gear icon** (⚙, top‑right) → **Edit Page**. This opens Lightning App Builder on the
+   current Home page. *(To build a fresh page instead: Setup → **Lightning App Builder** → **New** →
+   **Home Page** → pick a template.)*
+3. In the **Components** panel (left), scroll to the **Custom** section and **drag `Daily Briefing`**
+   onto the canvas — a full‑width region is best.
+4. Select the component and set its **design properties** on the right (account scope, per‑list
+   filters, row limits, section colors). See [App Builder design properties](#app-builder-design-properties).
+5. Click **Save**. For a new page, click **Activation** and assign it as **Org Default**,
+   **App Default**, or **App + Profile**, then **Save**.
+6. Open the Home tab and confirm the briefing renders with your data.
+
+> Prereqs already satisfied by deploying this repo: the component is exposed to `lightning__HomePage`
+> (`isExposed=true`), and the running user needs the `Application Access` + `Daily Briefing Access`
+> permission sets to see all sections and the account‑health field.
 
 ---
 
