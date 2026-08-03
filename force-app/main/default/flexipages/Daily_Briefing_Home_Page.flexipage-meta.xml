@@ -8,6 +8,26 @@
     <flexiPageRegions>
         <itemInstances>
             <componentInstance>
+                <componentInstanceProperties>
+                    <name>maxRecords</name>
+                    <value>5</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>accountsHealthFilter</name>
+                    <value>Critical</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>tasksPriorityFilter</name>
+                    <value>High only</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>casesPriorityFilter</name>
+                    <value>High only</value>
+                </componentInstanceProperties>
+                <componentInstanceProperties>
+                    <name>applicationsFilter</name>
+                    <value>Needs decision only</value>
+                </componentInstanceProperties>
                 <componentName>dailyBriefing</componentName>
                 <identifier>dailyBriefingHome</identifier>
             </componentInstance>

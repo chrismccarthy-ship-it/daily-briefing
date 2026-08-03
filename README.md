@@ -65,6 +65,49 @@ design properties** — no code change needed to reconfigure.
 
 ---
 
+## App Builder design properties
+
+Every property below is set per placement in the Lightning App Builder — the same component can
+behave differently on a focused Home page vs. a full App page. No redeploy needed.
+
+### Scope & AI
+| Property | Type | Default | Effect |
+|---|---|---|---|
+| Default account scope | `owner` / `engagement` | `owner` | Which accounts load by default. |
+| Hide scope toggle | Boolean | `false` | Lock to the default scope. |
+| Hide AI summary panel | Boolean | `false` | Hide the AI summary + ask‑a‑question panel. |
+
+### Show / hide sections
+`Hide: Accounts`, `Hide: Tasks`, `Hide: Cases`, `Hide: Opportunities`, `Hide: Applications`,
+`Hide: Alerts & Mentions`, `Hide: Slack Messages` — each a Boolean (default `false`).
+
+### Filters (applied at the data source, before the rep's in‑page search/sort)
+| Property | Options | Default | Effect |
+|---|---|---|---|
+| Filter: Accounts by health | All / At Risk / Critical / Churned | All | Show only accounts of that health status. |
+| Filter: Tasks by priority | All / High only | All | Limit tasks to High/Critical priority. |
+| Filter: Cases by priority | All / High only | All | Limit cases to High/Critical priority or Escalated. |
+| Filter: Applications | All / Needs decision only | All | Show only applications closing this month and not yet approved. |
+| Filter: Min opportunity amount | Integer | `0` | Only overdue opportunities at/above this amount (`0` = all). |
+
+### Row limits
+| Property | Type | Default | Effect |
+|---|---|---|---|
+| Max records per section | Integer (1–50) | `10` | Global cap for every section. |
+| Max rows: Accounts / Tasks / Cases / Opportunities / Applications / Alerts / Slack | Integer (0–50) | `0` | Per‑section cap; `0` inherits the global cap above. |
+
+The summary counts at the top of the dashboard reflect the filtered sets.
+
+> The deployed **Daily Briefing Home** page (`Daily_Briefing_Home_Page`) ships preconfigured for a
+> focused start‑of‑day view: `Max records = 5`, Accounts = `Critical`, Tasks = `High only`,
+> Cases = `High only`, Applications = `Needs decision only`.
+
+### Section accent colors
+`Color: Accounts / Tasks / Cases / Opportunities / Alerts / Slack / Applications` — hex strings
+(e.g. `#B7791F`) driving each section's accent bar.
+
+---
+
 ## Dependencies & prerequisites
 
 The app leans on org features and fields that are **not** all contained in this repo. Verify these
