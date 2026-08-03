@@ -93,6 +93,10 @@
                 <behavior>Edit</behavior>
                 <field>ParentId</field>
             </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>SDO_AI_AccountHealth__c</field>
+            </layoutItems>
         </layoutColumns>
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>

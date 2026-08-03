@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FlexiPage xmlns="http://soap.sforce.com/2006/04/metadata">
+    <description>Start-your-day Home page featuring the Daily Briefing dashboard.</description>
+    <flexiPageRegions>
+        <name>Dashboard</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <itemInstances>
+            <componentInstance>
+                <componentName>dailyBriefing</componentName>
+                <identifier>dailyBriefingHome</identifier>
+            </componentInstance>
+        </itemInstances>
+        <name>Section_1</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <name>Sidebar</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <name>Section_2</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <flexiPageRegions>
+        <name>Content</name>
+        <type>Region</type>
+    </flexiPageRegions>
+    <masterLabel>Daily Briefing Home</masterLabel>
+    <template>
+        <name>SDO_LRP_Homepage</name>
+    </template>
+    <type>HomePage</type>
+</FlexiPage>

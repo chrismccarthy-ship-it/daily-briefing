@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<PermissionSet xmlns="http://soap.sforce.com/2006/04/metadata">
+    <label>Daily Briefing Access</label>
+    <description>Field access for fields the Daily Briefing dashboard reads that are not on a standard object grant. Assign alongside Application Access.</description>
+    <hasActivationRequired>false</hasActivationRequired>
+    <fieldPermissions>
+        <field>Account.SDO_AI_AccountHealth__c</field>
+        <readable>true</readable>
+        <editable>true</editable>
+    </fieldPermissions>
+</PermissionSet>
