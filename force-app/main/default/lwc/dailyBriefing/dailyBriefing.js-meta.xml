@@ -28,6 +28,25 @@
             <property name="hideAlerts" type="Boolean" label="Hide: Alerts &amp; Mentions" default="false"/>
             <property name="hideSlack" type="Boolean" label="Hide: Slack Messages" default="false"/>
 
+            <property name="accountsHealthFilter" type="String" label="Filter: Accounts by health"
+                description="Show only accounts with this health status." datasource="All,At Risk,Critical,Churned" default="All"/>
+            <property name="tasksPriorityFilter" type="String" label="Filter: Tasks by priority"
+                description="Limit tasks to high/critical priority." datasource="All,High only" default="All"/>
+            <property name="casesPriorityFilter" type="String" label="Filter: Cases by priority"
+                description="Limit cases to high/critical priority or escalated." datasource="All,High only" default="All"/>
+            <property name="applicationsFilter" type="String" label="Filter: Applications"
+                description="Show only applications that need a decision this month." datasource="All,Needs decision only" default="All"/>
+            <property name="opportunitiesMinAmount" type="Integer" label="Filter: Min opportunity amount"
+                description="Only show overdue opportunities at or above this amount (0 = all)." default="0" min="0"/>
+
+            <property name="maxAccounts" type="Integer" label="Max rows: Accounts (0 = use global)" default="0" min="0" max="50"/>
+            <property name="maxTasks" type="Integer" label="Max rows: Tasks (0 = use global)" default="0" min="0" max="50"/>
+            <property name="maxCases" type="Integer" label="Max rows: Cases (0 = use global)" default="0" min="0" max="50"/>
+            <property name="maxOpportunities" type="Integer" label="Max rows: Opportunities (0 = use global)" default="0" min="0" max="50"/>
+            <property name="maxApplications" type="Integer" label="Max rows: Applications (0 = use global)" default="0" min="0" max="50"/>
+            <property name="maxAlerts" type="Integer" label="Max rows: Alerts (0 = use global)" default="0" min="0" max="50"/>
+            <property name="maxSlack" type="Integer" label="Max rows: Slack (0 = use global)" default="0" min="0" max="50"/>
+
             <property name="accentAccounts" type="String" label="Color: Accounts (hex)" default="#B7791F"/>
             <property name="accentTasks" type="String" label="Color: Tasks (hex)" default="#1B69C4"/>
             <property name="accentCases" type="String" label="Color: Cases (hex)" default="#C23934"/>

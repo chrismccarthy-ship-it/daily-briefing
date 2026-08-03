@@ -67,6 +67,22 @@ export default class DailyBriefing extends NavigationMixin(LightningElement) {
     @api hideAiSummary = false;
     @api hideApplications = false;
 
+    // Per-section row caps (0 = inherit the global "Max records per section").
+    @api maxAccounts = 0;
+    @api maxTasks = 0;
+    @api maxCases = 0;
+    @api maxOpportunities = 0;
+    @api maxApplications = 0;
+    @api maxAlerts = 0;
+    @api maxSlack = 0;
+
+    // Per-section admin filters (App Builder). Applied before the in-page filters.
+    @api accountsHealthFilter = 'All'; // All | At Risk | Critical | Churned
+    @api tasksPriorityFilter = 'All'; // All | High only
+    @api casesPriorityFilter = 'All'; // All | High only
+    @api opportunitiesMinAmount = 0; // only overdue opps with Amount >= value (0 = all)
+    @api applicationsFilter = 'All'; // All | Needs decision only
+
     scope = 'owner';
     isLoading = true;
     errorMessage;
@@ -214,6 +230,47 @@ export default class DailyBriefing extends NavigationMixin(LightningElement) {
         return !n || n < 1 ? 9999 : n;
     }
 
+    // Per-section row cap: use the section override when set (>0), else the global limit.
+    _sectionLimit(key) {
+        const per = {
+            accounts: this.maxAccounts,
+            tasks: this.maxTasks,
+            cases: this.maxCases,
+            opportunities: this.maxOpportunities,
+            applications: this.maxApplications,
+            alerts: this.maxAlerts,
+            slack: this.maxSlack
+        };
+        const n = parseInt(per[key], 10);
+        return n && n > 0 ? n : this.limit;
+    }
+
+    // ---- admin (App Builder) source filters: applied before rows are built ----
+    _filteredAccounts() {
+        const list = (this.data && this.data.accounts) || [];
+        const f = this.accountsHealthFilter;
+        if (!f || f === 'All') return list;
+        return list.filter((a) => (a.HealthStatus || '') === f);
+    }
+    _filteredTasks() {
+        const list = (this.data && this.data.tasks) || [];
+        return this.tasksPriorityFilter === 'High only'
+            ? list.filter((t) => this._isHigh(t.Priority))
+            : list;
+    }
+    _filteredCases() {
+        const list = (this.data && this.data.cases) || [];
+        return this.casesPriorityFilter === 'High only'
+            ? list.filter((c) => this._isHigh(c.Priority) || this._isEscalated(c.Status))
+            : list;
+    }
+    _filteredApplications() {
+        const list = (this.data && this.data.applications) || [];
+        return this.applicationsFilter === 'Needs decision only'
+            ? list.filter((a) => this._appNeedsDecision(a))
+            : list;
+    }
+
     // section visibility = admin hide toggles + business-mode filter
     _isSectionVisible(key) {
         const hide = {
@@ -235,8 +292,8 @@ export default class DailyBriefing extends NavigationMixin(LightningElement) {
     get counts() {
         const d = this.data || {};
         return [
-            { key: 'a', section: 'accounts', label: 'At-risk accounts', value: (d.accounts || []).length },
-            { key: 't', section: 'tasks', label: 'Open tasks', value: (d.tasks || []).length },
+            { key: 'a', section: 'accounts', label: 'At-risk accounts', value: this._filteredAccounts().length },
+            { key: 't', section: 'tasks', label: 'Open tasks', value: this._filteredTasks().length },
             { key: 'c', section: 'cases', label: 'High-priority cases', value: this._highCaseCount() },
             { key: 'o', section: 'opportunities', label: 'Overdue opps', value: this._overdueOpps().length },
             { key: 'p', section: 'applications', label: 'Apps to review', value: this._appsToReview().length },
@@ -264,12 +321,17 @@ export default class DailyBriefing extends NavigationMixin(LightningElement) {
     _overdueOpps() {
         const d = this.data || {};
         const today = d.asOfDate;
+        const min = parseInt(this.opportunitiesMinAmount, 10) || 0;
         return (d.opportunities || []).filter(
-            (o) => !o.IsClosed && o.CloseDate && o.CloseDate < today
+            (o) =>
+                !o.IsClosed &&
+                o.CloseDate &&
+                o.CloseDate < today &&
+                (min <= 0 || (o.Amount != null && o.Amount >= min))
         );
     }
     _highCaseCount() {
-        return ((this.data && this.data.cases) || []).filter(
+        return this._filteredCases().filter(
             (x) => this._isHigh(x.Priority) || this._isEscalated(x.Status)
         ).length;
     }
@@ -294,7 +356,7 @@ export default class DailyBriefing extends NavigationMixin(LightningElement) {
 
         add('accounts', this.hideAccounts, 'Accounts That Need Attention', this.accentAccounts, 'utility:company',
             ['Account', 'Health', 'Risk Reason', 'Owner'], 'No at-risk accounts. Your book looks healthy.',
-            (d.accounts || []).map((a) => this._row('Account', a.Id, [
+            this._filteredAccounts().map((a) => this._row('Account', a.Id, [
                 this._link(a.Name, this._recUrl('Account', a.Id)),
                 this._badge(a.HealthStatus, 'error'),
                 this._text(a.RiskReason),
@@ -303,7 +365,7 @@ export default class DailyBriefing extends NavigationMixin(LightningElement) {
 
         add('tasks', this.hideTasks, 'Top Tasks to Tackle First', this.accentTasks, 'utility:task',
             ['Task', 'Related To', 'Due', 'Priority', 'Status'], 'No open tasks. You are all caught up.',
-            (d.tasks || []).map((t) => {
+            this._filteredTasks().map((t) => {
                 const overdue = t.ActivityDate && t.ActivityDate < today;
                 return this._row('Task', t.Id, [
                     this._link(t.Subject, this._recUrl('Task', t.Id), this._isHigh(t.Priority)),
@@ -316,7 +378,7 @@ export default class DailyBriefing extends NavigationMixin(LightningElement) {
 
         add('cases', this.hideCases, 'Cases Requiring Your Attention', this.accentCases, 'utility:case',
             ['Case', 'Account', 'Priority', 'Status', 'Opened'], 'No open cases need your attention.',
-            (d.cases || []).map((c) => {
+            this._filteredCases().map((c) => {
                 const hot = this._isHigh(c.Priority) || this._isEscalated(c.Status);
                 const label = `${c.CaseNumber} — ${c.Subject}`;
                 return this._row('Case', c.Id, [
@@ -341,7 +403,7 @@ export default class DailyBriefing extends NavigationMixin(LightningElement) {
         add('applications', this.hideApplications, 'Applications', this.accentApplications, 'utility:file',
             ['Application', 'Status', 'Amount', 'Close Date', 'Created'],
             'No pending applications to review.',
-            (d.applications || []).map((ap) => {
+            this._filteredApplications().map((ap) => {
                 const flag = this._appNeedsDecision(ap);
                 return this._row('Application__c', ap.Id, [
                     this._link(`App # ${ap.ApplicationNumber || ap.Name}`, this._recUrl('Application__c', ap.Id), flag),
@@ -445,7 +507,7 @@ export default class DailyBriefing extends NavigationMixin(LightningElement) {
             });
         }
         const total = rows.length;
-        const shown = rows.slice(0, this.limit);
+        const shown = rows.slice(0, this._sectionLimit(s.key));
         const columns = s.headers.map((h, i) => {
             const active = sort && sort.col === i;
             const dirDesc = active && sort.dir === 'desc';
