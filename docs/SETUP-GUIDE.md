@@ -127,6 +127,21 @@ export default class DailyBriefing extends LightningElement {
 - Deploy the LWC bundle + Apex.
 - Drop the component on the **Home page** in App Builder. Zero clicks for the rep.
 
+### Tune each list per placement (no redeploy)
+Select the component in App Builder to configure it — the same component can be focused on a
+Home page and full on an App page:
+- **Filters** (applied at the data source, before the rep's in‑page search/sort):
+  *Accounts by health* (All / At Risk / Critical / Churned), *Tasks by priority* and
+  *Cases by priority* (All / High only), *Applications* (All / Needs decision only), and a
+  *Min opportunity amount* threshold.
+- **Row limits:** a global *Max records per section*, plus a per‑section *Max rows* for
+  Accounts / Tasks / Cases / Opportunities / Applications / Alerts / Slack (`0` = inherit the global).
+- **Show/hide** each section, set **accent colors**, and pick the default **account scope**.
+
+The shipped **Daily Briefing Home** page comes preconfigured for a focused start‑of‑day view
+(Max records 5; Accounts = Critical; Tasks/Cases = High only; Applications = Needs decision only).
+See the design‑properties table in the repo `README.md` for the full list.
+
 > Trade-off: more reliable styling and UX, but you own the HTML injection (use a trusted
 > source — this HTML comes from your own prompt, not user input, which keeps it safe).
 
