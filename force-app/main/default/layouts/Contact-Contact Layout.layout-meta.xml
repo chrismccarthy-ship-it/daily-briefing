@@ -281,20 +281,11 @@
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
-        <fields>Account_Type__c</fields>
-        <fields>Opened_Date__c</fields>
-        <fields>Last_4_Digits__c</fields>
-        <fields>Is_Overdraft_Account__c</fields>
-        <fields>Overdraft_Protection_Account__c</fields>
         <relatedList>Financial_Account__c.Contact__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
-        <fields>Transaction_Date__c</fields>
-        <fields>Transaction_Status__c</fields>
-        <fields>Amount__c</fields>
-        <fields>Vendor_Name__c</fields>
-        <relatedList>Credit_Card_Transaction__c.Contact__c</relatedList>
+        <relatedList>Card_Transactions__c.Contact__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>

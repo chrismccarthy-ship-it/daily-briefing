@@ -110,6 +110,61 @@
         <style>TwoColumnsTopToBottom</style>
     </layoutSections>
     <layoutSections>
+        <customLabel>true</customLabel>
+        <detailHeading>true</detailHeading>
+        <editHeading>true</editHeading>
+        <label>C360 Modern Card</label>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Metric_1__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Metric_2__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Metric_3__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>ContactCardPicture__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>ContactCardBackground__c</field>
+            </layoutItems>
+        </layoutColumns>
+        <layoutColumns>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Metric_4__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Metric_5__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>Metric_6__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>ContactCardHealthScore__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>ContactCardTags__c</field>
+            </layoutItems>
+            <layoutItems>
+                <behavior>Edit</behavior>
+                <field>SDO_Cust360_Contact_Picture_URL__c</field>
+            </layoutItems>
+        </layoutColumns>
+        <style>TwoColumnsLeftToRight</style>
+    </layoutSections>
+    <layoutSections>
         <customLabel>false</customLabel>
         <detailHeading>false</detailHeading>
         <editHeading>true</editHeading>
@@ -169,6 +224,11 @@
     </miniLayout>
     <platformActionList>
         <actionListContext>Record</actionListContext>
+        <platformActionListItems>
+            <actionName>Edit</actionName>
+            <actionType>StandardButton</actionType>
+            <sortOrder>0</sortOrder>
+        </platformActionListItems>
         <platformActionListItems>
             <actionName>LogACall</actionName>
             <actionType>QuickAction</actionType>
@@ -245,11 +305,6 @@
             <sortOrder>15</sortOrder>
         </platformActionListItems>
         <platformActionListItems>
-            <actionName>Edit</actionName>
-            <actionType>StandardButton</actionType>
-            <sortOrder>0</sortOrder>
-        </platformActionListItems>
-        <platformActionListItems>
             <actionName>Contact.SDO_Einstein_Configuration_Behavior_Score</actionName>
             <actionType>QuickAction</actionType>
             <sortOrder>16</sortOrder>
@@ -266,28 +321,6 @@
         </platformActionListItems>
     </platformActionList>
     <quickActionList/>
-    <relatedLists>
-        <fields>NAME</fields>
-        <fields>Application_Number__c</fields>
-        <fields>Amount__c</fields>
-        <fields>Close_Date__c</fields>
-        <fields>Decision_Status__c</fields>
-        <fields>Stage__c</fields>
-        <fields>Assigned_To__c</fields>
-        <relatedList>Application__c.Contact__c</relatedList>
-    </relatedLists>
-    <relatedLists>
-        <fields>ENTITLEMENT.NAME</fields>
-        <fields>ENTITLEMENT.ACCOUNT</fields>
-        <fields>NAME</fields>
-        <fields>ENTITLEMENT.STARTDATE</fields>
-        <fields>ENTITLEMENT.STATUS</fields>
-        <fields>ENTITLEMENT.TYPE</fields>
-        <relatedList>RelatedEntitlementContactList</relatedList>
-    </relatedLists>
-    <relatedLists>
-        <relatedList>RelatedNoteList</relatedList>
-    </relatedLists>
     <relatedLists>
         <fields>ASSET.NAME</fields>
         <fields>ASSET.SERIAL_NUMBER</fields>
@@ -331,10 +364,6 @@
         <sortOrder>Desc</sortOrder>
     </relatedLists>
     <relatedLists>
-        <fields>NAME</fields>
-        <relatedList>Financial_Account__c.Account_Holder__c</relatedList>
-    </relatedLists>
-    <relatedLists>
         <fields>Name</fields>
         <fields>Owner</fields>
         <fields>StartTime</fields>
@@ -347,10 +376,6 @@
         <fields>CallStartDateTime</fields>
         <fields>CallDisposition</fields>
         <fields>CallType</fields>
-        <fields>CallResolution</fields>
-        <fields>Issue__c</fields>
-        <fields>Summary__c</fields>
-        <fields>Service_Quality_Analysis__c</fields>
         <relatedList>ContactToVoiceRelatedListDataByFilter</relatedList>
     </relatedLists>
     <relatedLists>
@@ -396,16 +421,10 @@
     </relatedLists>
     <relatedLists>
         <fields>ORDERS.ORDER_NUMBER</fields>
-        <fields>ORDER.NAME</fields>
+        <fields>SALES.ACCOUNT.NAME</fields>
         <fields>ORDERS.STATUS</fields>
-        <fields>ORDER.PO_NUMBER</fields>
-        <fields>ORDER.SHIPPING_STREET</fields>
-        <fields>ORDER.SHIPPING_CITY</fields>
-        <fields>ORDER.SHIPPING_STATE</fields>
-        <fields>ORDER.SHIPPING_ZIP</fields>
+        <fields>ORDERS.TOTAL_AMOUNT</fields>
         <relatedList>Order.Contact__c</relatedList>
-        <sortField>ORDERS.ORDER_NUMBER</sortField>
-        <sortOrder>Desc</sortOrder>
     </relatedLists>
     <relatedLists>
         <fields>Name</fields>
@@ -429,30 +448,21 @@
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
-        <fields>Account_Type__c</fields>
-        <fields>Opened_Date__c</fields>
-        <fields>Last_4_Digits__c</fields>
-        <fields>Is_Overdraft_Account__c</fields>
-        <fields>Overdraft_Protection_Account__c</fields>
         <relatedList>Financial_Account__c.Contact__c</relatedList>
     </relatedLists>
     <relatedLists>
-        <fields>Name</fields>
-        <fields>CallType</fields>
-        <fields>Owner</fields>
-        <fields>CallOrigin</fields>
-        <fields>Issue__c</fields>
-        <fields>Resolution__c</fields>
-        <fields>Service_Quality_Analysis__c</fields>
-        <relatedList>VoiceCall.Contact__c</relatedList>
+        <fields>NAME</fields>
+        <relatedList>Card_Transactions__c.Contact__c</relatedList>
     </relatedLists>
     <relatedLists>
         <fields>NAME</fields>
-        <fields>Transaction_Date__c</fields>
-        <fields>Transaction_Status__c</fields>
+        <fields>Application_Number__c</fields>
         <fields>Amount__c</fields>
-        <fields>Vendor_Name__c</fields>
-        <relatedList>Credit_Card_Transaction__c.Contact__c</relatedList>
+        <fields>Close_Date__c</fields>
+        <fields>Decision_Status__c</fields>
+        <fields>Stage__c</fields>
+        <fields>Assigned_To__c</fields>
+        <relatedList>Application__c.Contact__c</relatedList>
     </relatedLists>
     <relatedObjects>AccountId</relatedObjects>
     <showEmailCheckbox>false</showEmailCheckbox>
@@ -461,7 +471,7 @@
     <showRunAssignmentRulesCheckbox>false</showRunAssignmentRulesCheckbox>
     <showSubmitAndAttachButton>false</showSubmitAndAttachButton>
     <summaryLayout>
-        <masterLabel>00hKh000004pI4B</masterLabel>
+        <masterLabel>00hWs00000CKJe1</masterLabel>
         <sizeX>4</sizeX>
         <sizeY>0</sizeY>
         <summaryLayoutStyle>Default</summaryLayoutStyle>
